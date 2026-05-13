@@ -9,14 +9,21 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - No unreleased changes.
+
 ### Fixed
 - No unreleased changes.
+
+---
+## [2026-05-14] - Fault Tolerance & High Availability
+### Changed
+- [Enimedez] Scaled App Service Plan to 2 instances (`capacity: 2`) to provide compute-layer fault tolerance.
+- [Enimedez] Updated architecture documentation and cost report to reflect multi-instance high availability design.
 
 ---
 ## [2026-05-14] - Azure Runtime Fix v2
 
 ### Fixed
-- [Enimedez] Fixed "Application Error" (Exit Code 127) by correctly implementing Next.js standalone mode: updated GitHub Actions to bundle dependencies in the deployment zip and set Azure startup command to `node server.js`.
+- [Enimedez] Fixed "Application Error" (Exit Code 127) by switching to Azure-side Kudu build. Simplified GitHub Actions deploy to push raw source and configured `SCM_DO_BUILD_DURING_DEPLOYMENT=true` with `npm start` on Azure App Service.
 
 ---
 ## [2026-05-14] - Azure Runtime Fix
