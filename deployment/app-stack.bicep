@@ -175,6 +175,7 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
       alwaysOn: true
       healthCheckPath: '/api/health'
       linuxFxVersion: 'NODE|22-lts'
+      appCommandLine: 'npm start'
       appSettings: [
         {
           name: 'AZURE_SQL_CONNECTION_STRING'
@@ -191,6 +192,10 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
         {
           name: 'WEBSITES_CONTAINER_START_TIME_LIMIT'
           value: '1800'
+        }
+        {
+          name: 'WEBSITES_PORT'
+          value: '3000'
         }
       ]
     }

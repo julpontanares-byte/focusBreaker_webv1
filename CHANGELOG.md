@@ -9,9 +9,15 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - No unreleased changes.
-
 ### Fixed
 - No unreleased changes.
+
+---
+
+## [2026-05-14] - Azure Runtime Fix
+
+### Fixed
+- [Enimedez] Added `WEBSITES_PORT=3000` and `npm start` startup command to resolve "Application Error" caused by port mismatch on Azure App Service
 
 ---
 

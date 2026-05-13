@@ -74,9 +74,10 @@ az webapp config appsettings set -g "$RG_NAME" -n "$APP_NAME" --setting AZURE_SQ
 az webapp config appsettings set -g "$RG_NAME" -n "$APP_NAME" --setting APPLICATIONINSIGHTS_CONNECTION_STRING="$(az monitor app-insights component show --app $APP_INSIGHTS_NAME -g $RG_NAME --query connectionString -o tsv)"
 az webapp config appsettings set -g "$RG_NAME" -n "$APP_NAME" --setting WEBSITE_NODE_DEFAULT_VERSION="22-lts"
 az webapp config appsettings set -g "$RG_NAME" -n "$APP_NAME" --setting WEBSITES_CONTAINER_START_TIME_LIMIT="1800"
+az webapp config appsettings set -g "$RG_NAME" -n "$APP_NAME" --setting WEBSITES_PORT="3000"
 
-echo "Configuring health check"
-az webapp config set -g "$RG_NAME" -n "$APP_NAME" --health-check-path "/api/health"
+echo "Configuring health check and startup command"
+az webapp config set -g "$RG_NAME" -n "$APP_NAME" --health-check-path "/api/health" --startup-file "npm start"
 
 echo "Deploying database schema"
 if [ -f "deployment/database-schema.sql" ]; then
