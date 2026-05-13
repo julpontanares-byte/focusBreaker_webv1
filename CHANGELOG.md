@@ -13,21 +13,24 @@ All notable changes to this project will be documented in this file.
 - No unreleased changes.
 
 ---
+## [2026-05-14] - Azure Runtime Fix v2
 
+### Fixed
+- [Enimedez] Fixed "Application Error" (Exit Code 127) by correctly implementing Next.js standalone mode: updated GitHub Actions to bundle dependencies in the deployment zip and set Azure startup command to `node server.js`.
+
+---
 ## [2026-05-14] - Azure Runtime Fix
 
 ### Fixed
 - [Enimedez] Added `WEBSITES_PORT=3000` and `npm start` startup command to resolve "Application Error" caused by port mismatch on Azure App Service
 
 ---
-
 ## [2026-05-14] - Build Fix
 
 ### Fixed
 - [Tercero] Added missing `useCallback` import in `lib/timer-context.tsx` causing prerender failure on the `/timer/analytics` page during CI/CD build
 
 ---
-
 ## [2026-05-14] - Azure Deployment and CI/CD Setup
 
 ### Added

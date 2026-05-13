@@ -195,7 +195,7 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
         }
         {
           name: 'WEBSITES_PORT'
-          value: '3000'
+          value: '8080'
         }
       ]
     }

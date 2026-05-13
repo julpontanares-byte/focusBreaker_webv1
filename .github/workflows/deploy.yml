@@ -24,12 +24,6 @@ jobs:
         working-directory: fB_web
         run: npm ci
 
-      - name: Build app
-        working-directory: fB_web
-        run: npm run build
-        env:
-          AZURE_SQL_CONNECTION_STRING: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -38,7 +32,7 @@ jobs:
       - name: Create deployment package
         run: |
           cd fB_web
-          zip -r ../app.zip . --exclude "node_modules/*" --exclude ".git/*"
+          zip -r ../app.zip . --exclude "node_modules/*" --exclude ".git/*" --exclude ".next/*"
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
