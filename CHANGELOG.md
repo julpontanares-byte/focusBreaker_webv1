@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 - [Tercero] Created the new `CHANGELOG.md` file for project history tracking
 
+- [Enimedez] fB_web: updated analytics, history, settings pages and minor UI fixes (to be committed and pushed)
+
 ### Changed
 - [Enimedez] Updated `README.md` to clarify the custom scenario, add full team member names, and align project metadata with the deployment story
 

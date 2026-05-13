@@ -1,6 +1,8 @@
 // localStorage management for focusBreaker timer app
 
 import { TimerSettings, TimerSession, DailyStats, DEFAULT_SETTINGS } from './timer-types'
+import { clearTimerSnapshot, persistTimerSnapshot } from './timer-api'
+import type { TimerSnapshot } from './timer-data'
 
 const STORAGE_KEYS = {
   SETTINGS: 'fb_timer_settings',
@@ -9,6 +11,26 @@ const STORAGE_KEYS = {
 }
 
 export class TimerStorageManager {
+  private static buildSnapshot(): TimerSnapshot {
+    return {
+      settings: this.getSettings(),
+      sessions: this.getSessions(),
+      stats: this.getAllStats(),
+      exportDate: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+  }
+
+  private static syncSnapshotToServer(): void {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    void persistTimerSnapshot(this.buildSnapshot()).catch((error) => {
+      console.warn('[focusBreaker] Background sync failed:', error)
+    })
+  }
+
   // Settings
   static getSettings(): TimerSettings {
     try {
@@ -23,6 +45,7 @@ export class TimerStorageManager {
     try {
       settings.lastModified = new Date().toISOString()
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings))
+      this.syncSnapshotToServer()
     } catch (error) {
       console.error('[v0] Failed to save settings:', error)
     }
@@ -30,6 +53,7 @@ export class TimerStorageManager {
 
   static resetSettings(): void {
     localStorage.removeItem(STORAGE_KEYS.SETTINGS)
+    this.syncSnapshotToServer()
   }
 
   // Sessions
@@ -48,6 +72,7 @@ export class TimerStorageManager {
       const sessions = this.getSessions()
       sessions.push(session)
       localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(sessions))
+      this.syncSnapshotToServer()
     } catch (error) {
       console.error('[v0] Failed to save session:', error)
     }
@@ -57,6 +82,7 @@ export class TimerStorageManager {
     try {
       const sessions = this.getSessions().filter((s) => s.id !== sessionId)
       localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(sessions))
+      this.syncSnapshotToServer()
     } catch (error) {
       console.error('[v0] Failed to delete session:', error)
     }
@@ -64,6 +90,7 @@ export class TimerStorageManager {
 
   static clearAllSessions(): void {
     localStorage.removeItem(STORAGE_KEYS.SESSIONS)
+    this.syncSnapshotToServer()
   }
 
   // Daily Stats
@@ -101,6 +128,7 @@ export class TimerStorageManager {
       const allStats: Record<string, DailyStats> = stored ? JSON.parse(stored) : {}
       allStats[stats.date] = stats
       localStorage.setItem(STORAGE_KEYS.DAILY_STATS, JSON.stringify(allStats))
+      this.syncSnapshotToServer()
     } catch (error) {
       console.error('[v0] Failed to save daily stats:', error)
     }
@@ -136,12 +164,17 @@ export class TimerStorageManager {
     return JSON.stringify(data, null, 2)
   }
 
-  static importData(jsonString: string): boolean {
+  static importData(jsonString: string, syncRemote = true): boolean {
     try {
       const data = JSON.parse(jsonString)
       if (data.settings) localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(data.settings))
       if (data.sessions) localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(data.sessions))
       if (data.stats) localStorage.setItem(STORAGE_KEYS.DAILY_STATS, JSON.stringify(data.stats))
+
+      if (syncRemote) {
+        this.syncSnapshotToServer()
+      }
+
       return true
     } catch (error) {
       console.error('[v0] Failed to import data:', error)
@@ -153,5 +186,10 @@ export class TimerStorageManager {
     localStorage.removeItem(STORAGE_KEYS.SETTINGS)
     localStorage.removeItem(STORAGE_KEYS.SESSIONS)
     localStorage.removeItem(STORAGE_KEYS.DAILY_STATS)
+    if (typeof window !== 'undefined') {
+      void clearTimerSnapshot().catch((error) => {
+        console.warn('[focusBreaker] Failed to clear remote snapshot:', error)
+      })
+    }
   }
 }
