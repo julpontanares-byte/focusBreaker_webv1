@@ -2,10 +2,6 @@
 
 This folder contains complete deployment scripts and documentation for deploying the focusBreaker app to Azure.
 
-> Note: Some Azure resources were created manually through the Azure Portal, but `deployment/main.bicep` is the authoritative infrastructure source going forward.
->
-> Use `deployment/README.md` as the primary deployment guide and treat other files in this folder as legacy references.
-
 ## Deployment Methods
 
 ### Method 1: PowerShell Script (Recommended for Windows)

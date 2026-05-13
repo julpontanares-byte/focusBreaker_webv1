@@ -17,7 +17,7 @@ This project is a custom scenario tailored to the student productivity tracker u
   - Michelle Tercero
   - Roviilyn Agnote
 
-- **Live Demo URL:** [To be updated after deployment]
+- **Live Demo URL:** [https://focusbreaker-akuzgkocdtj64.azurewebsites.net](https://focusbreaker-akuzgkocdtj64.azurewebsites.net)
 - **YouTube Video (Unlisted):** [To be updated after recording]
 
 ## Architecture summary
@@ -35,6 +35,7 @@ This project demonstrates at least two optimizations from the rubric:
 1. **Security/DevOps:** Managed Identity + Key Vault-based secret handling
 2. **Security/DevOps:** CI/CD automation via GitHub Actions
 3. **Monitoring/Operations:** Application Insights telemetry and health endpoint (`fB_web/app/api/health/route.ts`)
+4. **Reliability/Custom Scenario:** Multi-instance App Service deployment (2 active instances) for compute-layer fault tolerance.
 
 ## Repository structure
 
@@ -56,12 +57,12 @@ npm run dev
 
 1. **Architecture Diagram (20 pts)**
 	- Source: `diagram/architecture.md`
-	- Exported image target: `diagram/architecture.png`
+	- Exported image targets: `diagram/focusBreaker_web - Baseline Architecture.png` and `diagram/focusBreaker_web - Optimised Architecture.png`
 
 2. **Deployment Documentation (30 pts)**
 	- Step-by-step guide: `deployment/README.md`
 	- CLI/Bicep script reference: `deployment/deploy.azcli` and `deployment/*.bicep`
-	- GUI screenshot folder: `deployment/screenshots/`
+	- Deployment identity note: `deploymentPrincipalObjectId` is required for Key Vault secret creation during Bicep deployment
 
 3. **Cost Estimate Report (15 pts)**
 	- Main report: `report/cost-estimate.md`
@@ -72,10 +73,9 @@ npm run dev
 
 ## Final submission checklist
 
-- [/] Team members listed in this `README.md`
-- [ ] Live demo URL added
+- [x] Team members listed in this `README.md`
+- [x] Live demo URL added
 - [ ] Unlisted YouTube link added
-- [ ] `diagram/architecture.png` exported and committed
-- [ ] `deployment/screenshots/` populated (if using GUI method)
-- [ ] `report/cost-estimate.md` finalized with calculator screenshot
-- [ ] `CHANGELOG.md` includes dated entries from each team member
+- [ ] `diagram/` architecture images exported
+- [x] `CHANGELOG.md` includes dated entries from each team member
+- [ ] `report/cost-estimate.md` finalized with pricing calculator screenshot saved in `report/`

@@ -14,6 +14,12 @@ All notable changes to this project will be documented in this file.
 - No unreleased changes.
 
 ---
+## [2026-05-14] - Documentation Finalization
+### Changed
+- [Enimedez] Finalized root README.md with project metadata and submission links.
+- [Enimedez] Polished deployment guide.
+
+---
 ## [2026-05-14] - Fault Tolerance & High Availability
 ### Changed
 - [Enimedez] Scaled App Service Plan to 2 instances (`capacity: 2`) to provide compute-layer fault tolerance.
