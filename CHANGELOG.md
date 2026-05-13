@@ -14,6 +14,17 @@ All notable changes to this project will be documented in this file.
 - No unreleased changes.
 
 ---
+## [2026-05-14] - Project History & Final Cleanup
+### Changed
+- [Tercero] Update `CHANGELOG.md` to ensure all team member contributions were accurately documented and synchronized.
+
+---
+## [2026-05-14] - Cost Estimate Report Finalization
+### Added
+- [Tercero] Generated the official Azure Pricing Calculator itemized estimate and exported the component-level cost breakdown screenshots.
+- [Tercero] Finalized the Deliverable 3 Cost Estimate Report (`report/cost-estimate.md`) with executive summary and optimization notes.
+
+---
 ## [2026-05-14] - Documentation Finalization
 ### Changed
 - [Enimedez] Finalized root README.md with project metadata and submission links.
