@@ -1,0 +1,7 @@
+# Repository-level ignores for accidental root artifacts
+
+# Azure publish profiles contain deployment credentials
+*.PublishSettings
+
+# Root-level npm lockfiles should not live outside the app folder
+/package-lock.json
