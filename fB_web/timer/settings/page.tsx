@@ -8,35 +8,56 @@ import { DEFAULT_SETTINGS, TimerSettings } from '@/lib/timer-types'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { ArrowLeft, RotateCcw, Download, Upload } from 'lucide-react'
+import { ArrowLeft, RotateCcw, Download, Upload, Cloud } from 'lucide-react'
 
 export default function SettingsPage() {
   const { state, updateSettings } = useTimer()
   const [settings, setSettings] = useState<TimerSettings>(state.settings)
   const [saved, setSaved] = useState(false)
+  const [cloudStatus, setCloudStatus] = useState<'loading' | 'online' | 'offline'>('loading')
 
-  const handleSettingChange = (key: keyof TimerSettings, value: any) => {
-    const updated = { ...settings, [key]: value }
-    setSettings(updated)
+  useEffect(() => {
+    setSettings(state.settings)
+  }, [state.settings])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const checkCloudStatus = async () => {
+      try {
+        const response = await fetch('/api/health', { cache: 'no-store' })
+
+        if (!cancelled) {
+          setCloudStatus(response.ok ? 'online' : 'offline')
+        }
+      } catch {
+        if (!cancelled) {
+          setCloudStatus('offline')
+        }
+      }
+    }
+
+    void checkCloudStatus()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const handleSettingChange = (key: keyof TimerSettings, value: number | boolean | string) => {
+    setSettings((current) => ({ ...current, [key]: value }))
     setSaved(false)
   }
 
   const handleSave = () => {
     updateSettings(settings)
     setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    window.setTimeout(() => setSaved(false), 2000)
   }
 
   const handleReset = () => {
     setSettings(DEFAULT_SETTINGS)
     setSaved(false)
-  }
-
-  const handleResetAndApply = () => {
-    setSettings(DEFAULT_SETTINGS)
-    updateSettings(DEFAULT_SETTINGS)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
   }
 
   const handleExport = () => {
@@ -52,7 +73,6 @@ export default function SettingsPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Header */}
       <div className="sticky top-0 z-40 bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
           <Button asChild variant="ghost" size="sm">
@@ -64,9 +84,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Session Durations */}
         <Card className="p-6 bg-card border border-border rounded-lg space-y-6">
           <div>
             <h2 className="text-lg font-bold text-foreground mb-1">Session Durations</h2>
@@ -74,44 +92,38 @@ export default function SettingsPage() {
           </div>
 
           <div className="space-y-4">
-            {/* Work Duration */}
             <DurationSetting
               label="Work Session"
               value={settings.workDuration}
               min={1}
               max={60}
-              onChange={(val) => handleSettingChange('workDuration', val)}
+              onChange={(value) => handleSettingChange('workDuration', value)}
             />
 
-            {/* Short Break */}
             <DurationSetting
               label="Short Break"
               value={settings.shortBreak}
               min={1}
               max={30}
-              onChange={(val) => handleSettingChange('shortBreak', val)}
+              onChange={(value) => handleSettingChange('shortBreak', value)}
             />
 
-            {/* Long Break */}
             <DurationSetting
               label="Long Break"
               value={settings.longBreak}
               min={1}
               max={60}
-              onChange={(val) => handleSettingChange('longBreak', val)}
+              onChange={(value) => handleSettingChange('longBreak', value)}
             />
 
-            {/* Sessions Before Long Break */}
             <div>
-              <label className="text-sm font-semibold text-foreground block mb-2">
-                Sessions Before Long Break
-              </label>
+              <label className="text-sm font-semibold text-foreground block mb-2">Sessions Before Long Break</label>
               <input
                 type="range"
                 min="2"
                 max="6"
                 value={settings.sessionsBeforeLongBreak}
-                onChange={(e) => handleSettingChange('sessionsBeforeLongBreak', parseInt(e.target.value))}
+                onChange={(e) => handleSettingChange('sessionsBeforeLongBreak', parseInt(e.target.value, 10))}
                 className="w-full h-2 bg-border rounded-lg appearance-none cursor-pointer"
               />
               <p className="text-sm text-muted-foreground mt-2">
@@ -121,7 +133,6 @@ export default function SettingsPage() {
           </div>
         </Card>
 
-        {/* Notifications & Preferences */}
         <Card className="p-6 bg-card border border-border rounded-lg space-y-6">
           <div>
             <h2 className="text-lg font-bold text-foreground mb-1">Preferences</h2>
@@ -133,21 +144,21 @@ export default function SettingsPage() {
               label="Enable Sound Notifications"
               description="Play sound when session completes"
               checked={settings.soundEnabled}
-              onChange={(val) => handleSettingChange('soundEnabled', val)}
+              onChange={(value) => handleSettingChange('soundEnabled', value)}
             />
 
             <ToggleSetting
               label="Enable Browser Notifications"
               description="Show browser notifications for session completion"
               checked={settings.notificationEnabled}
-              onChange={(val) => handleSettingChange('notificationEnabled', val)}
+              onChange={(value) => handleSettingChange('notificationEnabled', value)}
             />
 
             <ToggleSetting
               label="Auto-start Next Session"
               description="Automatically start next session when timer completes"
               checked={settings.autoStartNextSession}
-              onChange={(val) => handleSettingChange('autoStartNextSession', val)}
+              onChange={(value) => handleSettingChange('autoStartNextSession', value)}
             />
 
             <div>
@@ -164,11 +175,31 @@ export default function SettingsPage() {
           </div>
         </Card>
 
-        {/* Data Management */}
         <Card className="p-6 bg-card border border-border rounded-lg space-y-6">
           <div>
             <h2 className="text-lg font-bold text-foreground mb-1">Data Management</h2>
             <p className="text-sm text-muted-foreground">Backup or reset your data</p>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <Cloud className="w-5 h-5 text-primary" />
+              <div>
+                <p className="text-sm font-semibold text-foreground">Cloud sync status</p>
+                <p className="text-xs text-muted-foreground">Server snapshot and health endpoint</p>
+              </div>
+            </div>
+            <span
+              className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                cloudStatus === 'online'
+                  ? 'bg-green-100 text-green-700'
+                  : cloudStatus === 'offline'
+                    ? 'bg-destructive/10 text-destructive'
+                    : 'bg-muted text-muted-foreground'
+              }`}
+            >
+              {cloudStatus === 'loading' ? 'Checking…' : cloudStatus === 'online' ? 'Online' : 'Offline'}
+            </span>
           </div>
 
           <div className="space-y-3">
@@ -182,12 +213,13 @@ export default function SettingsPage() {
                 const input = document.createElement('input')
                 input.type = 'file'
                 input.accept = '.json'
-                input.onchange = (e) => {
-                  const file = (e.target as HTMLInputElement).files?.[0]
+                input.onchange = (event) => {
+                  const file = (event.target as HTMLInputElement).files?.[0]
                   if (!file) return
+
                   const reader = new FileReader()
-                  reader.onload = (event) => {
-                    const result = event.target?.result as string
+                  reader.onload = (loadEvent) => {
+                    const result = loadEvent.target?.result as string
                     if (TimerStorageManager.importData(result)) {
                       window.location.reload()
                     }
@@ -218,15 +250,11 @@ export default function SettingsPage() {
           </div>
         </Card>
 
-        {/* Action Buttons */}
-        <div className="flex gap-4 sticky bottom-0 bg-background border-t border-border p-4 -mx-4">
+        <div className="flex gap-4 border-t border-border pt-6">
           <Button onClick={handleReset} variant="outline" className="flex-1">
             Reset to Defaults
           </Button>
-          <Button
-            onClick={handleSave}
-            className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
-          >
+          <Button onClick={handleSave} className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">
             {saved ? 'Saved!' : 'Save Settings'}
           </Button>
         </div>
@@ -257,7 +285,7 @@ function DurationSetting({
           min={min}
           max={max}
           value={value}
-          onChange={(e) => onChange(parseInt(e.target.value))}
+          onChange={(e) => onChange(parseInt(e.target.value, 10))}
           className="flex-1 h-2 bg-border rounded-lg appearance-none cursor-pointer"
         />
         <div className="w-16 text-right">
@@ -266,7 +294,7 @@ function DurationSetting({
             min={min}
             max={max}
             value={value}
-            onChange={(e) => onChange(Math.max(min, Math.min(max, parseInt(e.target.value) || min)))}
+            onChange={(e) => onChange(Math.max(min, Math.min(max, parseInt(e.target.value, 10) || min)))}
             className="text-right font-mono"
           />
         </div>
@@ -288,19 +316,14 @@ function ToggleSetting({
   onChange: (value: boolean) => void
 }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between gap-4">
       <div>
         <p className="text-sm font-semibold text-foreground">{label}</p>
         <p className="text-xs text-muted-foreground mt-1">{description}</p>
       </div>
-      <label className="relative inline-flex items-center cursor-pointer">
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-          className="sr-only peer"
-        />
-        <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary" />
+      <label className="relative inline-flex items-center cursor-pointer shrink-0">
+        <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="sr-only peer" />
+        <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary transition-colors" />
       </label>
     </div>
   )

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { fetchTimerSnapshot } from '@/lib/timer-api'
 import { TimerStorageManager } from '@/lib/timer-storage'
 import { TimerSession } from '@/lib/timer-types'
 import { Button } from '@/components/ui/button'
@@ -34,11 +35,12 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     setMounted(true)
-    calculateStats()
+    void calculateStats()
   }, [])
 
-  const calculateStats = () => {
-    const allSessions = TimerStorageManager.getSessions()
+  const calculateStats = async () => {
+    const snapshot = await fetchTimerSnapshot()
+    const allSessions = snapshot?.sessions ?? TimerStorageManager.getSessions()
     const workSessions = allSessions.filter((s) => s.mode === 'work')
 
     const totalSessions = workSessions.length

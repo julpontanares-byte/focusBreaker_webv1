@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { fetchTimerSnapshot } from '@/lib/timer-api'
 import { TimerStorageManager } from '@/lib/timer-storage'
 import { TimerSession } from '@/lib/timer-types'
 import { Button } from '@/components/ui/button'
@@ -14,23 +15,32 @@ export default function HistoryPage() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
-    loadSessions()
-  }, [filter])
+    const loadSessions = async () => {
+      const snapshot = await fetchTimerSnapshot()
+      const allSessions = snapshot?.sessions ?? TimerStorageManager.getSessions()
 
-  const loadSessions = () => {
-    const allSessions = TimerStorageManager.getSessions()
-    if (filter === 'today') {
-      const today = new Date().toDateString()
-      setSessions(allSessions.filter((s) => new Date(s.startTime).toDateString() === today).reverse())
-    } else {
-      setSessions(allSessions.reverse())
+      if (filter === 'today') {
+        const today = new Date().toDateString()
+        setSessions(allSessions.filter((s) => new Date(s.startTime).toDateString() === today).reverse())
+      } else {
+        setSessions(allSessions.reverse())
+      }
     }
-  }
+
+    setMounted(true)
+    void loadSessions()
+  }, [filter])
 
   const handleDelete = (sessionId: string) => {
     TimerStorageManager.deleteSession(sessionId)
-    loadSessions()
+
+    const updatedSessions = TimerStorageManager.getSessions()
+    if (filter === 'today') {
+      const today = new Date().toDateString()
+      setSessions(updatedSessions.filter((s) => new Date(s.startTime).toDateString() === today).reverse())
+    } else {
+      setSessions(updatedSessions.reverse())
+    }
   }
 
   if (!mounted) return null

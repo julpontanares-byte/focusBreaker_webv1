@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react'
 import { TimerState, TimerSession, SessionMode, DEFAULT_SETTINGS } from './timer-types'
 import { TimerStorageManager } from './timer-storage'
+import { fetchTimerSnapshot } from './timer-api'
 
 interface TimerContextType {
   state: TimerState
@@ -26,12 +27,32 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     settings: TimerStorageManager.getSettings(),
   }))
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  const notificationRef = useRef<HTMLAudioElement | null>(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // Load audio element for notifications
+  // Hydrate from server snapshot when available so the client reflects cloud state.
   useEffect(() => {
-    notificationRef.current = new Audio('/notification.mp3')
+    let cancelled = false
+
+    const hydrateFromServer = async () => {
+      const snapshot = await fetchTimerSnapshot()
+
+      if (!snapshot || cancelled) {
+        return
+      }
+
+      TimerStorageManager.importData(JSON.stringify(snapshot), false)
+
+      setState((prev: TimerState) => ({
+        ...prev,
+        settings: snapshot.settings ?? prev.settings,
+      }))
+    }
+
+    void hydrateFromServer()
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   // Timer countdown effect
@@ -39,7 +60,7 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     if (!state.isRunning) return
 
     intervalRef.current = setInterval(() => {
-      setState((prev) => {
+      setState((prev: TimerState) => {
         const newRemaining = prev.timeRemaining - 1
 
         if (newRemaining <= 0) {
@@ -57,24 +78,21 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     }
   }, [state.isRunning])
 
-  const playNotification = () => {
-    if (state.settings.soundEnabled && notificationRef.current) {
-      notificationRef.current.play().catch(() => {
-        // Fallback: use Web Audio API for notification
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
-        const oscillator = audioContext.createOscillator()
-        const gainNode = audioContext.createGain()
+  const playNotification = useCallback(() => {
+    if (state.settings.soundEnabled) {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const oscillator = audioContext.createOscillator()
+      const gainNode = audioContext.createGain()
 
-        oscillator.connect(gainNode)
-        gainNode.connect(audioContext.destination)
+      oscillator.connect(gainNode)
+      gainNode.connect(audioContext.destination)
 
-        oscillator.frequency.value = 800
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
+      oscillator.frequency.value = 800
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
 
-        oscillator.start(audioContext.currentTime)
-        oscillator.stop(audioContext.currentTime + 0.5)
-      })
+      oscillator.start(audioContext.currentTime)
+      oscillator.stop(audioContext.currentTime + 0.5)
     }
 
     if (state.settings.notificationEnabled && 'Notification' in window && Notification.permission === 'granted') {
@@ -83,9 +101,9 @@ export function TimerProvider({ children }: { children: ReactNode }) {
         icon: '/icon.png',
       })
     }
-  }
+  }, [state.currentMode, state.settings.notificationEnabled, state.settings.soundEnabled])
 
-  const handleSessionComplete = (prevState: TimerState): TimerState => {
+  const handleSessionComplete = useCallback((prevState: TimerState): TimerState => {
     const session: TimerSession = {
       id: `${Date.now()}`,
       mode: prevState.currentMode,
@@ -136,14 +154,14 @@ export function TimerProvider({ children }: { children: ReactNode }) {
       isRunning: prevState.settings.autoStartNextSession,
       currentSession: session,
     }
-  }
+  }, [state.settings.autoStartNextSession, state.settings.longBreak, state.settings.sessionsBeforeLongBreak, state.settings.shortBreak, state.settings.workDuration])
 
   const startTimer = () => {
-    setState((prev) => ({ ...prev, isRunning: true }))
+    setState((prev: TimerState) => ({ ...prev, isRunning: true }))
   }
 
   const pauseTimer = () => {
-    setState((prev) => ({ ...prev, isRunning: false }))
+    setState((prev: TimerState) => ({ ...prev, isRunning: false }))
   }
 
   const resetTimer = () => {
@@ -155,7 +173,7 @@ export function TimerProvider({ children }: { children: ReactNode }) {
           : 'longBreak'
     ]
 
-    setState((prev) => ({
+    setState((prev: TimerState) => ({
       ...prev,
       isRunning: false,
       timeRemaining: duration * 60,
@@ -182,13 +200,21 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     }
 
     TimerStorageManager.addSession(session)
-    handleSessionComplete(state)
+
+    setState((prev: TimerState) => {
+      const completedState = handleSessionComplete(prev)
+      return {
+        ...completedState,
+        isRunning: false,
+        currentSession: session,
+      }
+    })
   }
 
   const takeBreak = (breakType: 'short' | 'long') => {
     const duration = breakType === 'short' ? state.settings.shortBreak : state.settings.longBreak
 
-    setState((prev) => ({
+    setState((prev: TimerState) => ({
       ...prev,
       currentMode: breakType === 'short' ? 'short-break' : 'long-break',
       timeRemaining: duration * 60,
@@ -198,7 +224,7 @@ export function TimerProvider({ children }: { children: ReactNode }) {
   }
 
   const snooze = (minutes: number) => {
-    setState((prev) => ({
+    setState((prev: TimerState) => ({
       ...prev,
       timeRemaining: prev.timeRemaining + minutes * 60,
       totalTime: prev.totalTime + minutes * 60,
@@ -209,7 +235,7 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     const updatedSettings = { ...state.settings, ...newSettings }
     TimerStorageManager.saveSettings(updatedSettings)
 
-    setState((prev) => ({
+    setState((prev: TimerState) => ({
       ...prev,
       settings: updatedSettings,
     }))

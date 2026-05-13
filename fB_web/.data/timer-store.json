@@ -1,0 +1,108 @@
+{
+  "settings": {
+    "workDuration": 5,
+    "shortBreak": 5,
+    "longBreak": 15,
+    "sessionsBeforeLongBreak": 4,
+    "soundEnabled": true,
+    "notificationEnabled": true,
+    "theme": "dark",
+    "autoStartNextSession": false,
+    "lastModified": "2026-05-13T06:43:36.298Z"
+  },
+  "sessions": [
+    {
+      "id": "1778654578766",
+      "mode": "long-break",
+      "duration": 15,
+      "startTime": "2026-05-13T06:22:58.766Z",
+      "endTime": "2026-05-13T06:42:58.766Z",
+      "skipped": true,
+      "quality": "skipped",
+      "completed": false
+    },
+    {
+      "id": "1778654578770",
+      "mode": "long-break",
+      "duration": 15,
+      "startTime": "2026-05-13T06:22:58.770Z",
+      "endTime": "2026-05-13T06:42:58.770Z",
+      "skipped": false,
+      "quality": "perfect",
+      "completed": true
+    },
+    {
+      "id": "1778654578770",
+      "mode": "long-break",
+      "duration": 15,
+      "startTime": "2026-05-13T06:22:58.770Z",
+      "endTime": "2026-05-13T06:42:58.770Z",
+      "skipped": false,
+      "quality": "perfect",
+      "completed": true
+    },
+    {
+      "id": "1778654582362",
+      "mode": "short-break",
+      "duration": 5,
+      "startTime": "2026-05-13T06:38:02.362Z",
+      "endTime": "2026-05-13T06:43:02.362Z",
+      "skipped": true,
+      "quality": "skipped",
+      "completed": false
+    },
+    {
+      "id": "1778654582365",
+      "mode": "short-break",
+      "duration": 5,
+      "startTime": "2026-05-13T06:38:02.365Z",
+      "endTime": "2026-05-13T06:43:02.365Z",
+      "skipped": false,
+      "quality": "perfect",
+      "completed": true
+    },
+    {
+      "id": "1778654582366",
+      "mode": "short-break",
+      "duration": 5,
+      "startTime": "2026-05-13T06:38:02.366Z",
+      "endTime": "2026-05-13T06:43:02.366Z",
+      "skipped": false,
+      "quality": "perfect",
+      "completed": true
+    },
+    {
+      "id": "1778654623881",
+      "mode": "work",
+      "duration": 5,
+      "startTime": "2026-05-13T06:18:43.881Z",
+      "endTime": "2026-05-13T06:43:43.881Z",
+      "skipped": true,
+      "quality": "skipped",
+      "completed": false
+    },
+    {
+      "id": "1778654623883",
+      "mode": "work",
+      "duration": 5,
+      "startTime": "2026-05-13T06:18:43.883Z",
+      "endTime": "2026-05-13T06:43:43.883Z",
+      "skipped": false,
+      "quality": "perfect",
+      "completed": true
+    },
+    {
+      "id": "1778654623884",
+      "mode": "work",
+      "duration": 5,
+      "startTime": "2026-05-13T06:18:43.884Z",
+      "endTime": "2026-05-13T06:43:43.884Z",
+      "skipped": false,
+      "quality": "perfect",
+      "completed": true
+    }
+  ],
+  "stats": {},
+  "exportDate": "2026-05-13T06:43:43.884Z",
+  "updatedAt": "2026-05-13T06:43:44.010Z"
+}

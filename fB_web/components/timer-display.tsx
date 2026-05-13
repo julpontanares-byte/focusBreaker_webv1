@@ -30,26 +30,26 @@ export function TimerDisplay() {
     state.currentMode === 'work' ? 'from-primary to-secondary' : 'from-green-600 to-emerald-600'
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 py-12">
+    <div className="flex flex-col items-center justify-center gap-8">
       {/* Mode Label */}
       <div className="text-center">
-        <p className="text-muted-foreground text-sm uppercase tracking-widest font-semibold mb-2">
+        <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground font-semibold mb-2">
           {modeLabel}
         </p>
-        <p className="text-muted-foreground text-xs">
+        <p className="text-sm text-muted-foreground">
           Session {Math.floor(state.sessionCount / 2) + 1}
         </p>
       </div>
 
       {/* Large Timer Display */}
-      <div className="relative w-72 h-72 flex items-center justify-center">
+      <div className="relative flex aspect-square w-full max-w-[22rem] items-center justify-center">
         {/* Animated Background Gradient */}
         <div
-          className={`absolute inset-0 rounded-full bg-gradient-to-br ${modeColor} opacity-10 blur-2xl animate-pulse`}
+          className={`absolute inset-6 rounded-full bg-gradient-to-br ${modeColor} opacity-15 blur-3xl animate-pulse`}
         />
 
         {/* Progress Ring */}
-        <svg className="absolute w-full h-full transform -rotate-90" viewBox="0 0 300 300">
+        <svg className="absolute inset-0 h-full w-full -rotate-90 transform" viewBox="0 0 300 300">
           {/* Background ring */}
           <circle cx="150" cy="150" r="140" fill="none" stroke="currentColor" strokeWidth="2" className="text-border" />
 
@@ -71,10 +71,10 @@ export function TimerDisplay() {
 
         {/* Timer Text */}
         <div className="relative z-10 text-center">
-          <p className="font-mono text-7xl font-bold text-foreground leading-none mb-2">
+          <p className="font-mono text-6xl font-black tracking-tight text-foreground leading-none mb-2 sm:text-7xl">
             {formatTime(state.timeRemaining)}
           </p>
-          <p className="text-sm text-muted-foreground uppercase tracking-wide">Remaining</p>
+          <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">Remaining</p>
         </div>
       </div>
 
@@ -83,7 +83,7 @@ export function TimerDisplay() {
         <Button
           onClick={state.isRunning ? pauseTimer : startTimer}
           size="lg"
-          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full w-16 h-16 flex items-center justify-center p-0"
+          className="h-16 w-16 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-105 hover:bg-primary/90"
           title={state.isRunning ? 'Pause' : 'Start'}
         >
           {state.isRunning ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-0.5" />}
@@ -93,7 +93,7 @@ export function TimerDisplay() {
           onClick={resetTimer}
           size="lg"
           variant="outline"
-          className="rounded-full w-16 h-16 flex items-center justify-center p-0"
+          className="h-16 w-16 rounded-full border-border/80 bg-background/70 shadow-sm transition-transform hover:scale-105 hover:bg-accent/20"
           title="Reset"
         >
           <RotateCcw className="w-5 h-5" />
@@ -101,7 +101,7 @@ export function TimerDisplay() {
       </div>
 
       {/* Status Text */}
-      <p className="text-xs text-muted-foreground text-center max-w-xs">
+      <p className="max-w-xs text-center text-sm text-muted-foreground">
         {state.isRunning ? 'Timer is running' : 'Click play to start'}
       </p>
     </div>
