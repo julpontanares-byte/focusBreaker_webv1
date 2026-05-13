@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback, ReactNode } from 'react'
 import { TimerState, TimerSession, SessionMode, DEFAULT_SETTINGS } from './timer-types'
 import { TimerStorageManager } from './timer-storage'
 import { fetchTimerSnapshot } from './timer-api'

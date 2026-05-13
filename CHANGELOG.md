@@ -15,6 +15,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2026-05-14] - Build Fix
+
+### Fixed
+- [Tercero] Added missing `useCallback` import in `lib/timer-context.tsx` causing prerender failure on the `/timer/analytics` page during CI/CD build
+
+---
+
 ## [2026-05-14] - Azure Deployment and CI/CD Setup
 
 ### Added
