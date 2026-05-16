@@ -12,6 +12,23 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - No unreleased changes.
+ 
+---
+## [2026-05-17] - Architecture Diagram and README Update
+### Added
+- [Agnote] Exported high-resolution Baseline and Optimized architecture diagrams.
+- [Agnote] Documented the architecture design decisions and component interactions in `diagram/architecture.md`.
+- [Enimedez] Committed architecture diagrams to the repository.
+
+### Changed
+- [Enimedez] Updated `README.md` with live demo and YouTube presentation link, and checked off final submission checklist items.
+
+---
+## [2026-05-14] - Final Review and Submission Preparation
+### Changed
+- [Agnote] Conducted a final technical review of the Bicep infrastructure templates to verify fault-tolerance parameters and resource naming conventions.
+- [Agnote] Audited the root `README.md` and `deployment/README.md` to ensure all setup instructions were clear and the final submission checklist was accurate.
+- [Tercero] Verified the live application deployment via the `/api/health` endpoint and confirmed all secure database connections were functional post-migration.
 
 ---
 ## [2026-05-14] - Project History & Final Cleanup

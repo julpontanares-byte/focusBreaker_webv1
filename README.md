@@ -18,7 +18,7 @@ This project is a custom scenario tailored to the student productivity tracker u
   - Roviilyn Agnote
 
 - **Live Demo URL:** [https://focusbreaker-akuzgkocdtj64.azurewebsites.net](https://focusbreaker-akuzgkocdtj64.azurewebsites.net)
-- **YouTube Video (Unlisted):** [To be updated after recording]
+- **YouTube Video (Unlisted):** [Cloud Computing Presentation](https://www.youtube.com/watch?v=ji4SRAud1cU)
 
 ## Architecture summary
 
@@ -75,7 +75,7 @@ npm run dev
 
 - [x] Team members listed in this `README.md`
 - [x] Live demo URL added
-- [ ] Unlisted YouTube link added
-- [ ] `diagram/` architecture images exported
+- [x] Unlisted YouTube link added
+- [x] `diagram/` architecture images exported
 - [x] `CHANGELOG.md` includes dated entries from each team member
-- [ ] `report/cost-estimate.md` finalized with pricing calculator screenshot saved in `report/`
+- [x] `report/cost-estimate.md` finalized with pricing calculator screenshot saved in `report/`
